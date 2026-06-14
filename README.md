@@ -9,7 +9,7 @@ python_version: "3.13"
 app_file: app.py
 pinned: false
 license: mit
-short_description: AI-powered tool that simplifies medical terminology into clear, patient-friendly explanations.
+short_description: Simplifies medical terms into plain English.
 ---
 
 # 🩺 Medical Term Explainer
