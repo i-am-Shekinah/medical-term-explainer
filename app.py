@@ -27,6 +27,7 @@ prompt_template = PromptTemplate.from_template(prompt_template_str)
 
 model = init_chat_model('gemini-3.5-flash', model_provider='google_genai')
 
+
 def generate_explanation(medical_term: str):
     prompt = prompt_template.format(medical_term=medical_term)
 
@@ -35,16 +36,34 @@ def generate_explanation(medical_term: str):
     return response.text
 
 
-demo = gr.Interface(
-    fn=generate_explanation,
-    inputs=[gr.Textbox(label='Medical Term', lines=1)],
-    outputs=[gr.Textbox(label='Explanation', lines=5)],
-    flagging_mode='never',
-    title='Medical Terminology Explainer',
-    description='Get a simplified explanation of any medical term'
-)
+with gr.Blocks(theme=gr.themes.Soft()) as demo:
+
+    gr.Markdown('# 🩺 Medical Term Explainer')
+    gr.Markdown('### Understand medical jargon in simple, human language')
+
+    status = gr.Markdown('🟢 Ready')
+
+    with gr.Row():
+        term_input = gr.Textbox(
+            label='Enter a medical term',
+            placeholder='e.g. Myocardial Infarction',
+        )
+
+    submit_btn = gr.Button('Explain', variant='primary')
+
+    output = gr.Markdown()
+
+    def wrapped_generate(term):
+        yield '⏳ Thinking... analyzing medical term', ''
+        result = generate_explanation(term)
+        yield "✅ Done", result
+
+    submit_btn.click(
+        fn=wrapped_generate,
+        inputs=term_input,
+        outputs=[status, output]
+    )
 
 if __name__ == '__main__':
     demo.launch()
-
 
